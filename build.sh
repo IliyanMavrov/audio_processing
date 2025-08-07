@@ -1,9 +1,28 @@
 #!/bin/bash
-# build.sh - Скрипт за компилация на audio_tool_gui.c
+# build.sh - Компилира audio_tool_gui.c с автоматична проверка за зависимости
 
-echo "🔧 Проверка за нужните библиотеки..."
-sudo apt update
-sudo apt install -y libgtk-3-dev portaudio19-dev
+check_and_install() {
+    PACKAGE=$1
+    dpkg -s "$PACKAGE" &> /dev/null
+
+    if [ $? -ne 0 ]; then
+        echo "📦 Пакетът '$PACKAGE' не е инсталиран. Инсталираме..."
+        sudo apt-get install -y "$PACKAGE"
+    else
+        echo "✅ '$PACKAGE' е вече инсталиран."
+    fi
+}
+
+echo "🔍 Проверка за нужните библиотеки..."
+
+REQUIRED_PACKAGES=(
+    libgtk-3-dev
+    portaudio19-dev
+)
+
+for pkg in "${REQUIRED_PACKAGES[@]}"; do
+    check_and_install "$pkg"
+done
 
 echo "⚙️ Компилиране..."
 gcc audio_tool_gui.c -o audio_tool_gui `pkg-config --cflags --libs gtk+-3.0` -lportaudio -lpthread -lm
