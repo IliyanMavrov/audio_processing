@@ -1,3 +1,6 @@
+# Пакети за Ubuntu/Debian системи:
 libgtk-3-dev
 portaudio19-dev
 libsndfile1-dev
+pkg-config
+build-essential
